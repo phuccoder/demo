@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>User Management</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .action-buttons button {
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>User Management</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+      </tbody>
+    </table>
+
+    <!-- Thymeleaf: sử dụng RESTful API để lấy danh sách người dùng từ UserController -->
+    <script th:inline="javascript">
+      var users = [];
+      /* Gọi API để lấy danh sách người dùng */
+      fetch("/allUsers")
+        .then((response) => response.json())
+        .then((data) => {
+          users = data;
+          renderUsers(users);
+        });
+
+      function renderUsers(users) {
+        var tableBody = document.getElementById("userTableBody");
+        tableBody.innerHTML = "";
+        users.forEach((user) => {
+          var row = document.createElement("tr");
+          row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.password}</td>
+                <td>${user.role}</td>
+                <td class="action-buttons">
+                    <button onclick="updateUser(${user.id})">Update</button>
+                    <button onclick="deleteUser(${user.id})">Delete</button>
+                </td>
+            `;
+          tableBody.appendChild(row);
+        });
+      }
+    </script>
+  </body>
+</html>
